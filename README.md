@@ -1,5 +1,5 @@
 
-# 🔥 Fire Hotspot Monitoring AI Agent (Mini-ADK)
+# 🔥 Fire Hotspot Monitoring AI Agent
 
 A lightweight multi-agent AI application that monitors, analyzes, and explains fire hotspot data in Southeast Asia using real-time NASA FIRMS data. Built using Node.js and integrated with multiple open-source LLMs via Together.ai — including Gemini, LLaMA 4, and Qwen.
 
