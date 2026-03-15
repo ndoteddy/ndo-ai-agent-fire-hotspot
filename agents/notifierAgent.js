@@ -1,5 +1,5 @@
 const Agent = require("../core/agent");
-const axios = require("axios");
+const apiClient = require("../utils/apiClient");
 
 const notifier = new Agent({
   name: "Notifier",
@@ -7,13 +7,13 @@ const notifier = new Agent({
   goal: "Create a public alert summary",
   handler: async (analysis) => {
     const prompt = `Turn the following analysis into a short, public-friendly fire risk warning:\n\n${analysis}`;
-    const res = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        contents: [{ role: "user", parts: [{ text: prompt }] }]
-      }
-    );
-    return res.data.candidates[0].content.parts[0].text;
+    try {
+      const res = await apiClient.postGemini(prompt, process.env.GEMINI_API_KEY);
+      return res.candidates[0].content.parts[0].text;
+    } catch (err) {
+      console.error("Notifier error:", err.response?.data || err.message || err);
+      return "⚠️ Notifier failed to create public summary.";
+    }
   }
 });
 

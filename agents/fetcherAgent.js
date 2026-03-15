@@ -1,5 +1,5 @@
 const Agent = require("../core/agent");
-const axios = require("axios");
+const apiClient = require("../utils/apiClient");
 
 const fetcher = new Agent({
   name: "Fetcher",
@@ -7,8 +7,13 @@ const fetcher = new Agent({
   goal: "Retrieve fire/hotspot data from NASA",
   handler: async () => {
     const url = process.env.NASA_FIRMS_URL;
-    const response = await axios.get(url);
-    return response.data;
+    try {
+      const data = await apiClient.getUrl(url);
+      return data;
+    } catch (err) {
+      console.error("Fetcher error:", err.response?.data || err.message || err);
+      return "⚠️ Failed to fetch hotspot data.";
+    }
   }
 });
 

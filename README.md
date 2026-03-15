@@ -63,17 +63,15 @@ npm install
    NASA_FIRMS_URL=https://firms.modaps.eosdis.nasa.gov/mapserver/wfs/SouthEast_Asia/map_key/?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAME=ms:fires_modis_24hrs&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::4326&BBOX=-90,-180,90,180,urn:ogc:def:crs:EPSG::4326&outputformat=csv
    ```
 
-2. Start the app:
+2. Create a `.env` file (or copy `.env.example`) and fill keys, then start the app:
 
    ```bash
-   node index.js
+   cp .env.example .env
+   npm install
+   npm start
    ```
 
-3. Open your browser:
-
-   ```
-   http://localhost:3000
-   ```
+3. The repository includes only the backend agent runner by default — outputs are logged to the console.
 
 ---
 
