@@ -1,39 +1,28 @@
-require('dotenv').config();
-const fetcher = require('./agents/fetcherAgent');
-const cleaner = require('./agents/cleanerAgent');
-const analyzer = require('./agents/analyzerAgent');
-const patternExplainer = require('./agents/patternExplainerAgent');
-const insight = require('./agents/insightAgent');
-const notifier = require('./agents/notifierAgent');
+const config = require("./config");
+const { createLogger } = require("./utils/logger");
+const { runCrew } = require("./runCrew");
+
+const logger = createLogger("cli");
 
 async function main() {
-  console.log('🔎 Hotspot Agent Crew starting...');
+  logger.info("Hotspot Agent Crew starting", { env: config.NODE_ENV });
 
-  const fetched = await fetcher.run();
-  if (fetched && fetched.error) return console.error('Fetch failed', fetched);
+  const result = await runCrew();
 
-  const cleaned = await cleaner.run(fetched);
-  if (cleaned && cleaned.error) return console.error('Clean failed', cleaned);
+  console.log("\n--- Results ---");
+  console.log("Cleaned CSV:\n", result.cleaned);
+  console.log("\nAnalysis:\n", result.analysis);
+  console.log("\nPublic Summary:\n", result.summary);
+  console.log("\nExpert Insight:\n", result.insights);
+  console.log("\nPattern Explanation:\n", result.patternExplanation);
 
-  const analysis = await analyzer.run(cleaned);
-  if (analysis && analysis.error) return console.error('Analyze failed', analysis);
-
-  const pattern = await patternExplainer.run(analysis);
-  const expert = await insight.run(analysis);
-  const publicSummary = await notifier.run(analysis);
-
-  console.log('\n--- Results ---');
-  console.log('Analysis:', analysis);
-  console.log('Pattern explanation:', pattern);
-  console.log('Expert insight:', expert);
-  console.log('Public summary:', publicSummary);
-
-  console.log('✅ All done.');
+  logger.info("All done");
 }
 
 if (require.main === module) {
-  main().catch(err => {
-    console.error('Fatal error:', err);
+  main().catch((err) => {
+    const log = createLogger("cli");
+    log.error("Fatal error", { error: err.message });
     process.exit(1);
   });
 }

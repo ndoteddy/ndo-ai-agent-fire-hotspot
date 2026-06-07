@@ -1,4 +1,15 @@
+const { createLogger } = require("../utils/logger");
+
+/**
+ * @typedef {Object} AgentOptions
+ * @property {string} name
+ * @property {string} [role]
+ * @property {string} [goal]
+ * @property {(input: any) => Promise<any>} handler
+ */
+
 class Agent {
+  /** @param {AgentOptions} opts */
   constructor({ name, role, goal, handler }) {
     if (!name || typeof name !== "string") throw new Error("Agent requires a valid name");
     if (!handler || typeof handler !== "function") throw new Error("Agent requires a handler function");
@@ -7,16 +18,22 @@ class Agent {
     this.role = role || "agent";
     this.goal = goal || "";
     this.handler = handler;
+    this.logger = createLogger(`agent:${name}`);
   }
 
+  /**
+   * Executes the agent handler with the given input.
+   * @param {any} input
+   * @returns {Promise<any>}
+   */
   async run(input) {
-    console.info(`🧠 [${this.name}] Starting — ${this.goal}`);
+    this.logger.info(`Starting: ${this.goal}`);
     try {
       const result = await this.handler(input);
-      console.info(`✅ [${this.name}] Completed`);
+      this.logger.info("Completed successfully");
       return result;
     } catch (err) {
-      console.error(`❌ [${this.name}] Error:`, err.message || err);
+      this.logger.error("Handler threw an unhandled error", { error: err.message });
       return { error: true, message: err.message || String(err) };
     }
   }
